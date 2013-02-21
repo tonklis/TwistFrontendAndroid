@@ -39,7 +39,9 @@
     
     // Desplegamos el mensaje inicial
     var respuesta = null;
-    accionUsuario();
+    setTimeout(function() {
+    	accionUsuario();
+    }, 2000);
     
     function getMiTurno() {
         if (getCache('usuario').id == juego.board.last_action) {

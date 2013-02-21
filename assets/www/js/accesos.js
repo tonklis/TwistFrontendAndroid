@@ -11,9 +11,7 @@ var SERVICIO_PREGUNTAR = 9;
 var SERVICIO_ADIVINAR = 10;
 var SERVICIO_ABANDONAR = 11;
 var SERVICIO_CERRAR = 12;
-var RESETEAR_BADGES = 13;
-
-var enProceso = false;
+var SERVICIO_RESETEAR_BADGES = 13;
 
 /**
  * Función que invoca los servicios del servidor.
@@ -26,6 +24,7 @@ var enProceso = false;
  **/
 function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 	var url = "http://still-eyrie-7957.herokuapp.com/";
+    // var url = "http://192.168.1.128:3000/";
 	var paramsCompletos = false;
 	switch (tipo) {
 		case SERVICIO_LOGIN:
@@ -113,7 +112,7 @@ function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 				paramsCompletos = true;
 			}
 			break;
-        case RESETEAR_BADGES:
+        case SERVICIO_RESETEAR_BADGES:
 			if (params.id) {
 				url += "users/reset_badges/"+ params.id +".json";
                 delete params.id;
@@ -125,9 +124,7 @@ function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 	}
 	
 	// navigator.notification.alert('url: ' + url + ', params: ' + JSON.stringify(params), null, 'AdivinaMe');
-	if (paramsCompletos && !enProceso) {
-		// enProceso = true;
-		
+	if (paramsCompletos) {
 		if (funcionSuccess === undefined) {
 			funcionSuccess = function(response, textStatus, jqXHR) {
 				console.log('success ' + tipo + ': ' + response);
@@ -143,7 +140,7 @@ function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 			url: url,
 			type: "post",
 			data: params,
-			timeout: 20000
+			timeout: 30000
 		});
 		request.done(function (response, textStatus, jqXHR) {
 			funcionSuccess(response, textStatus, jqXHR);
@@ -152,16 +149,12 @@ function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 			funcionError(jqXHR, textStatus, errorThrown);
 			if (textStatus == 'timeout') {
 				alert('Al parecer tu conexión a internet es inestable. Por favor vuelve a intentar.');
+				inicio();
 			}
 		});
-		request.always(function (data, textStatus, jqXHR) {
-			enProceso = false;
-		});
-	} else if (!enProceso) {
+	} else {
 		console.log('Parámetros insuficientes para invocar el servicio.');
 		funcionError();
-	} else {
-		console.log('Otra petición está en proceso.');
 	}
 }
 
@@ -354,14 +347,14 @@ function cerrarJuego(params, funcionSuccess, funcionError) {
 }
 
 /**
- * Función que cierra el juego.
+ * Función que resetea el número de alertas-globo en la base de datos de usuarios.
  * @param params es un objeto que debe tener las siguientes propiedades:
- *   id: El id del juego
+ *   id: El id del usuario
  * @param funcionSuccess función que se invocará cuando se haya realizado una petición
  *   satisfactoria con los parámetros function(response, textStatus, jqXHR);
  * @param funcionError función que se invocará cuando se haya realizado una petición
  *   insatisfactoria con los parámetros function(jqXHR, textStatus, errorThrown);
  **/
-function cerrarJuego(params, funcionSuccess, funcionError) {
-	invocarServicio(SERVICIO_CERRAR, params, funcionSuccess, funcionError);
+function resetearBadges(params, funcionSuccess, funcionError) {
+	invocarServicio(SERVICIO_RESETEAR_BADGES, params, funcionSuccess, funcionError);
 }

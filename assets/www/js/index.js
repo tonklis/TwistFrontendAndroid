@@ -38,8 +38,13 @@ var app = {
     	}
     },
     onResume: function() {
-        app.setBadges(0);
-        app.getPending();
+    	resetearBadges({ id : getCache('usuario').id },
+    						function(response, textStatus, jqXHR) {
+    							app.setBadges(0);
+    							app.getPending();
+    						},
+                            function(jqXHR, textStatus, errorThrown) {
+                            });
         inicio();
     },
     getBadges: function() {
@@ -277,7 +282,8 @@ function login() {
 				alert("Tienes que conectar la aplicación a Facebook para poder continuar.");
 			}
 		},
-		{ scope: "email"}
+		{ scope: "email"} // Android
+		// { scope: "email,publish_stream"} // iOS
 	);
 }
 
@@ -344,7 +350,7 @@ function abrirTemplate(template) {
 		url: template,
 		success: function(data) {
 			if (number_template == current_template) {
-				$("#content_load").html(data).hide().fadeIn('slow');
+				$("#content_load").html(data);
 			}
 		}
 	});
