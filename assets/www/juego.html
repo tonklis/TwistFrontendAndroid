@@ -366,7 +366,7 @@
 					inicio();
 				} else {
 					app.sendNotification(juego.id, getCache('usuario').first_name + " ha ganado el juego.", true, 1);
-					alert('¡Ganaste! ¿Deseas crear una nuevo juego?',
+					alert(response.board.money_awarded + ' monedas<br/><br/>¡Ganaste! ¿Deseas crear una nuevo juego?',
 						ALERTA_NUEVO_JUEGO,
 						{
 							'btn_nuevo_juego' : function() {
