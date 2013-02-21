@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        
+        <!-- Hojas de estilo -->
+        <link rel="stylesheet" type="text/css" href="css/jquery/jquery-ui-1.10.0.custom.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery/jquery.mobile-1.2.0.css" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        
+        <!-- Liberias Cordova y FB -->
+        <script type="text/javascript" src="cordova-2.2.0.js"></script>
+        <script type="text/javascript" src="cdv-plugin-fb-connect.js"></script>
+        <script type="text/javascript" src="facebook_js_sdk.js"></script>
+        
+        <!-- Librerias JQUERY -->
+        <script type="text/javascript" src="js/jquery/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="js/jquery/jquery-ui-1.10.0.custom.js"></script>
+        <script type="text/javascript" src="js/jquery/jquery.mobile-1.2.0.js"></script>
+        
+        <!-- Librerias proyecto -->
+        <script type="text/javascript" src="plugins/PushNotification.js"></script>
+        <script type="text/javascript" src="js/accesos.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        
+        <title>Adivina-Me</title>
+    </head>
+	<body>
+        <div id="fb-root"></div>
+		
+		<script>
+            /* Sobrescribimos la función que se invoca antes de los servicios de facebook. */
+            inicializar = function() {
+				clearCache();
+				$('#alertas').load('alertas.html');
+				setTimeout(function() {
+					$('#btn_conectar_fb').show();
+				}, 10000);
+            }
+            
+            /* Sobrescribimos la función que se invoca al cargar la página. */
+			iniciarProceso = function () {
+				redirigir(paginaPrincipal);
+			}
+			
+			/* Sobrescribimos la función cuando es necesario conectarse a Facebook. */
+			mostrarConectar = function() {
+				$('#btn_conectar_fb').show();
+			}
+        </script>
+		
+		<div id="loader">
+			<img id="btn_conectar_fb" src="./img/btn_conectar_fb.png" onclick="login()" />
+		</div>
+		<div id="alertas" class="overlay">
+		</div>
+	</body>
+</html>

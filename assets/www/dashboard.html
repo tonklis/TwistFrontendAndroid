@@ -1,0 +1,184 @@
+<script>
+	// Javascript que se ejecute al iniciar la página.
+	$('#loading').show();
+	
+	var usuario = getCache('usuario');
+	$('#total_monedas').html(usuario.money);
+	
+	// Cambio de imágenes para botones.
+	$('#btn_nuevo_juego').bind('touchstart',function() { presionarBoton($(this)); });
+    $('#btn_nuevo_juego').bind('touchend',function() { soltarBoton($(this)); });
+	
+	obtenerJuegosPorUsuario({ id : usuario.id },
+		function(response, textStatus, jqXHR) {
+			$('#cuadro_negro').html('');
+			
+			$.ajax({
+				url: 'dashboard_partida.html',
+				success: function(data) {
+					for (var i = 0; i < response.length; i++) {
+						var $div = $("<div class='partida'/>");
+						$div.html(data);
+						agregarJuego($div, response[i]);
+					}
+					setCache('partidas', response);
+					$('#loading').hide();
+				}
+			});
+		},
+		function(jqXHR, textStatus, errorThrown) {
+			alert('No se pudieron obtener los juegos actuales. Por favor intenta mas tarde.');
+			$('#loading').hide();
+		});
+	
+	function agregarJuego($div, juego) {
+		var estatus = juego.board.status;
+		var visible = true;
+		if (juego.board.status == ESTATUS_NUEVO
+				|| juego.board.status == ESTATUS_TURNO) {
+			if (juego.board.last_action == usuario.id) {
+				estatus = ESTATUS_SU_TURNO;
+			} else {
+				estatus = ESTATUS_TU_TURNO;
+			}
+		} else if (juego.board.status == ESTATUS_ABANDONO) {
+			if (juego.board.last_action == usuario.id) {
+				visible = false;
+			}
+		}
+		
+		if (visible) {
+			$div.find('.thumb').attr('src', "http://graph.facebook.com/" + juego.opponent_game.user.facebook_id + "/picture?width=250&height=250");
+			$div.find('.nombre').html(juego.opponent_game.user.first_name);
+			
+			switch(estatus) {
+				case ESTATUS_TU_TURNO:
+					$div.find('.mensaje').html('¡ES TU TURNO!');
+					$div.find('.estado').addClass('tu_turno');
+					break;
+				case ESTATUS_SU_TURNO:
+					$div.find('.mensaje').html('Es su turno');
+					$div.find('.estado').addClass('su_turno');
+					break;
+				case ESTATUS_ABANDONO:
+					$div.find('.mensaje').html('Abandonó');
+					$div.find('.estado').addClass('abandono');
+					break;
+				case ESTATUS_FINALIZO:
+					if (juego.board.winner_id == usuario.id) {
+						$div.find('.mensaje').html('¡Ganaste!');
+						$div.find('.estado').addClass('tu_turno');
+					} else {
+						$div.find('.mensaje').html('¡Perdiste!');
+						$div.find('.estado').addClass('su_turno');
+					}
+					break;
+			}
+			
+			var ultimoMovimiento = new Date(juego.updated_at);
+			var hoy = new Date();
+			var diff = (hoy - ultimoMovimiento);
+			var dias = diff / (24 * 60 * 60 * 1000);
+			var horas = diff / (60 * 60 * 1000);
+			if (dias >= 1) {
+				$div.find('.actualizacion').html('Hace ' + Math.floor(dias) + ' días');
+			} else {
+				$div.find('.actualizacion').html('Hace ' + Math.floor(horas) + ' horas');
+			}
+			
+			// Se inicializan los clicks.
+		  
+			if (estatus == ESTATUS_TU_TURNO || estatus == ESTATUS_SU_TURNO || estatus == ESTATUS_FINALIZO) {
+				$div.click(function(event) {
+					setCache('juego', juego);
+					abrirTemplate('juego.html');
+				});
+			}
+		  
+			$div.find('.btn_borrar').click(function(event) {
+				confirmacion(juego);
+				event.stopImmediatePropagation();
+			});
+			
+			// Se agrega el div a la lista y se activa el evento de swipeleft.
+			$('#cuadro_negro').append($div);
+			$(".estado").swipeleft(function(event) {
+				$('.botones').hide();
+				$(event.target).children('.botones').show();
+			});
+			$(".estado").swiperight(function(event) {
+                $(event.target).children('.botones').hide();
+            });
+		}
+	}
+	
+	// Funcionalidad de los botones de borrar
+	function confirmacion(game) {
+		var mensaje = '¿Deseas abandonar esta partida? Se perderan todos los datos.';
+		if (game.board.status == ESTATUS_ABANDONO) {
+			var mensaje = '¿Deseas borrar esta partida?';
+		}
+		alert(mensaje,
+			 ALERTA_SI_NO,
+			 {
+			 	'btn_no' : cancela,
+			 	'btn_si' : function () { confirma(game); }
+			 });
+	}
+	
+	function cancela() {
+	}
+	
+	function confirma(game) {
+        if (game.board.status == ESTATUS_ABANDONO) {
+            cerrarJuego({ id : game.board.id },
+                function(response, textStatus, jqXHR) {
+                    if (response.id == game.board.id) {
+                        inicio();
+                    } else {
+                    	('#loading').hide();
+                        alert('No se pudo cerrar el juego. Por favor intenta mas tarde.');
+                    }
+                },
+                function(jqXHR, textStatus, errorThrown) {
+                	('#loading').hide();
+                    alert('No se pudo cerrar el juego. Por favor intenta mas tarde.');
+                });
+            
+        } else {
+            abandonarJuego({ id : game.board.id, user_id : usuario.id },
+                function(response, textStatus, jqXHR) {
+                    if(response.id == game.board.id){
+                        inicio();
+                    } else {
+                    	('#loading').hide();
+                        alert('No se pudo abandonar el juego. Por favor intenta mas tarde.');
+                    }
+                },
+                function(jqXHR, textStatus, errorThrown) {
+                	('#loading').hide();
+                    alert('No se pudo abandonar el juego. Por favor intenta mas tarde.');
+                });
+        }
+        
+	}
+    
+</script>
+<div id="dashboard">
+	<div class="izquierda">
+		<div id="menu">
+			<img id="btn_ajustes" src="img/db_btn_ajustes.png" onclick="abrirTemplate('ajustes.html');" />
+			<div id="mnu_monedas">
+				<img id="fondo_monedas" src="img/db_monedas.png" />
+				<div id="total_monedas"></div>
+			</div>
+			<div id="mnu_botones">
+				<img id="btn_nuevo_juego" src="img/db_btn_nuevo_juego.png" onclick="abrirTemplate('juegoNuevo.html');" />
+			</div>
+		</div>
+	</div>
+	<div class="derecha">
+		<div id="cuadro_negro">
+		</div>
+	</div>
+</div>

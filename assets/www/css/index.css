@@ -1,0 +1,860 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+}
+
+@font-face {
+	font-family: gotham;
+	src: url('fonts/gotham_medium.ttf');
+}
+
+@font-face {
+	font-family: gotham-bold;
+	src: url('fonts/gotham_bold.ttf');
+}
+
+body {
+    -webkit-touch-callout: none;                /* prevent callout to copy image, etc when tap to hold */
+    -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
+    -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
+    
+    background: #FF0017;
+    background-image: url('../img/fondo.png');
+    background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: center center; 
+    background-size: cover;
+    
+    font-family: gotham, 'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+	
+    color: #FFFFFF;
+    
+    width: 100%;
+    height: 100%;
+    
+    margin: 0px;
+    padding: 0px;
+    
+    text-align: center;
+}
+
+// Forzar la carga de imágenes
+body:after {
+	content: url('../img/fondo.png') url('../img/cargando.png') url('../img/fondo_dashboard.png') url('../img/loading_150.gif') url('../img/loading_250.gif') url('../img/logo.png') url('../img/overlay.png') url('../img/aj_fondo_slider_si.png') url('../img/aj_fondo_slider_no.png') url('../img/db_estado_tu_turno.png') url('../img/db_estado_su_turno.png') url('../img/db_estado_abandono.png') url('../img/db_monedas.png');
+	
+	display: none;
+}
+
+/** Login **/
+#loader {
+	position: fixed;
+	
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	
+	background: #FF0017;
+	background-image: url('../img/cargando.png');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position: center center; 
+    background-size: cover;
+    
+    z-index: 1000;
+}
+
+#btn_conectar_fb {
+	display: none;
+	
+	position: absolute;
+	width: 48%;
+	
+	left: 26%;
+	top: 86%;
+}
+
+#mensaje_loader {
+	position: absolute;
+	width: 100%;
+	
+	top: 81%;
+	
+	text-align: center;
+}
+
+#btn_probar_conexion {
+	position: absolute;
+	width: 37%;
+	
+	left: 31.5%;
+	top: 86%;
+}
+
+/** Principal **/
+#content {
+	position: fixed;
+	
+	left: 50%;
+	top: 50%;
+}
+
+.izquierda {
+	position: absolute;
+	width: 22.40%;
+	height: 100%;
+	
+	left: 0;
+	top: 0;
+	
+	text-align: center;
+}
+
+.derecha {
+	position: absolute;
+	width: 77.60%;
+	height: 100%;
+	
+	right: 0;
+	top: 0;
+	
+	text-align: center;
+}
+
+#menu {
+	position: absolute;
+	
+	right: 0;
+	left: 0;
+	top: 0;
+	bottom: 0;
+}
+
+#logo {
+	position: absolute;
+	
+	width: 22%;
+	
+	left: 0.2%;
+	top: 0;
+	
+	z-index: 1000;
+}
+
+#logo img {
+	width: 100%;
+}
+
+#cuadro_negro {
+	position: absolute;
+	width: 96%;
+	height: 94%;
+	
+	left: 0;
+	top: 2%;
+	
+	background-image: url('../img/fondo_dashboard.png');
+	border: 0.2em solid #3F4243;
+	
+	-moz-border-radius: 2%;
+	border-radius: 2%;
+	
+	-moz-box-shadow:    0.2em 0.2em 0.6em #000000;
+	-webkit-box-shadow: 0.2em 0.2em 0.6em #000000;
+	box-shadow:         0.2em 0.2em 0.6em #000000;
+	
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	z-index: 1;
+}
+
+.overlay {
+	position: fixed;
+	display: none;
+	background: transparent url('../img/overlay.png') repeat top left;
+	
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+
+	z-index: 1000;
+}
+
+.loading_250 {
+	position: absolute;
+	
+	width: 14%;
+	
+	left: 43%;
+	top: 40%;
+	
+	z-index: 1001;
+}
+
+.alerta {
+	display: none;
+	position: absolute;
+	
+	width: 70%;
+	height: 50%;
+	
+	left: 10%;
+	top: 20%;
+	
+	font-size: 110%;
+	line-height: 150%;
+	padding: 5%;
+	
+	background-image: url('../img/fondo_dashboard.png');
+	border: 0.2em solid #3F4243;
+	
+	-moz-border-radius: 3%;
+	border-radius: 3%;
+	
+	-moz-box-shadow:    0.2em 0.2em 0.6em #000000;
+	-webkit-box-shadow: 0.2em 0.2em 0.6em #000000;
+	box-shadow:         0.2em 0.2em 0.6em #000000;
+	
+	text-align: center;
+	
+	overflow: auto;
+}
+
+.alerta .alerta_mensaje {
+	margin-top: 10%;
+	font-size: 120%;
+}
+
+.alerta .alerta_input {
+}
+
+.alerta .alerta_botones {
+	width: 90%;
+	margin-top: 5%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.alerta .alerta_botones img {
+	height: 20%;
+	
+	margin-left: 2%;
+	margin-right: 2%;
+}
+
+.alerta .alerta_imagen {
+    width : 30%;
+    float: left;
+    margin-top: 10%;
+    
+    background: #FFFFFF;
+    
+    -moz-border-radius: 5%;
+	border-radius: 5%;
+}
+
+.alerta_imagen .thumb {
+	width: 84%;
+	
+	margin-top: 8%;
+}
+
+.alerta_imagen .nombre {
+	bottom: 5%;
+	
+	color: #000000;
+}
+
+.carta {
+	position: relative;
+	
+	background: #FFFFFF;
+	
+	-moz-border-radius: 5%;
+	border-radius: 5%;
+	
+	z-index: 10;
+}
+
+.carta .thumb_loading {
+	position: absolute;
+	
+	width: 74%;
+	
+	top: 10%;
+	left: 13%;
+	
+	z-index: 10;
+}
+.carta .thumb {
+	position: absolute;
+	
+	width: 74%;
+	
+	top: 10%;
+	left: 13%;
+	
+	z-index: 15;
+}
+
+.carta .nombre {
+	position: absolute;
+	display: block;
+	
+	width: 100%;
+	
+	bottom: 5%;
+	left: 0;
+	
+	font-size: 52%;
+	color: #000000;
+	text-transform: uppercase;
+	text-align: center;
+}
+
+.carta .letra {
+	position: absolute;
+	display: block;
+	
+	width: 100%;
+	
+	bottom: 15%;
+	left: 0;
+	
+	font-size: 300%;
+	font-family: gotham-bold;
+	color: #000000;
+	text-transform: uppercase;
+	text-align: center;
+}
+
+.carta .front {
+
+}
+
+.carta .back {
+	display: none;
+}
+
+.carta .back img {
+	position: absolute;
+	
+	width: 74%;
+	
+	top: 13%;
+	left: 13%;
+	
+	z-index: 15;
+}
+
+/** AJUSTES **/
+.forma .titulo {
+	margin-top: 1em;
+	
+	font-size: 150%;
+	font-family: gotham-bold;
+	text-transform: uppercase;
+	
+	clear: both;
+}
+
+.forma .forma_renglon {
+	clear: both;
+	
+	margin-top: 0.25em;
+	margin-bottom: 0.25em;
+}
+
+.forma .separador {
+	clear: both;
+	height: 0.5em;
+}
+
+.forma .texto {
+	font-size: 70%;
+	
+	margin-top: 1em;
+	margin-left: 2em;
+	margin-right: 2em;
+	margin-bottom: 1em;
+	
+	text-align: justify;
+}
+
+.forma label {
+	width: 50%;
+	float: left;
+	text-align: left;
+	
+	margin-left: 3em;
+}
+
+.forma .slider {
+	float: right;
+	text-align: left;
+	
+	margin-right: 5em;
+	margin-bottom: 0.5em;
+	
+	height: 1.5em;
+	width: 4.2em;
+	
+	background-repeat: no-repeat;
+	background-position: top right; 
+    background-size: contain;
+}
+
+.forma .slider img {
+	margin-top: 0.1em;
+	height: 1.35em;
+}
+
+.forma .slider[valor='si'] {
+	background-image: url('../img/aj_fondo_slider_si.png');
+}
+
+.forma .slider[valor='si'] img {
+	margin-left: 2.85em;
+}
+
+.forma .slider[valor='no'] {
+	background-image: url('../img/aj_fondo_slider_no.png');
+}
+
+.forma .slider[valor='no'] img {
+	margin-left: 0em;
+}
+
+/** DASHBOARD **/
+#btn_ajustes {
+	position: absolute;
+	
+	top: 39%;
+	left: 39%;
+	
+	width: 23%;
+}
+
+#mnu_monedas {
+	position: absolute;
+	
+	width: 100%;
+	top: 25%;
+	
+	font-family: gotham-bold;
+}
+
+#mnu_monedas #fondo_monedas {
+	position: absolute;
+	
+	width: 80%;
+	
+	right: 10%;
+	top: 0;
+}
+
+#mnu_monedas #total_monedas {
+	position: absolute;
+	
+	width: 100%;
+	
+	right: 0;
+	top: 1.5em;
+	
+	text-align: center;
+}
+
+#mnu_botones {
+	position: absolute;
+	
+	width: 100%;
+	bottom: 1%;
+}
+
+#mnu_botones img {
+	width: 90%;
+}
+
+.mnu_botones_small img {
+	width: 80% !important;
+}
+
+.partida {
+	position: relative;
+	
+	width: 100%;
+	height: 22%;
+	
+	margin-top: 1.5%;
+	margin-bottom: 1.5%;
+}
+
+.partida .jugador {
+	position: absolute;
+	
+	width: 18.5%;
+	height: 100%;
+	
+	left: 1.5%;
+}
+
+.partida .estado {
+	position: absolute;
+	
+	width: 77%;
+	height: 100%;
+	
+	right: 1.5%;
+	
+	text-align: left;
+}
+
+.estado .mensaje {
+	position: absolute;
+	display: block;
+	
+	top: 30%;
+	left: 5%;
+	
+	font-family: gotham-bold;
+	font-size: 110%;
+	text-transform: uppercase;
+}
+
+.estado .actualizacion {
+	position: absolute;
+	display: block;
+	
+	top: 60%;
+	left: 5%;
+	
+	font-family: gotham-bold;
+	font-size: 90%;
+}
+
+.estado .botones {
+	display: none;
+}
+
+.estado .botones .btn_borrar {
+	position: absolute;
+	
+	top: 30%;
+	right: 10%;
+	
+	width: 30%;
+	
+	z-index: 20;
+}
+
+.partida .tu_turno {
+	background: transparent url('../img/db_estado_tu_turno.png') no-repeat top left;
+    background-size: contain;
+    
+    -moz-text-shadow:    0.1em 0.1em 0.1em #009D44;
+	-webkit-text-shadow: 0.1em 0.1em 0.1em #009D44;
+	text-shadow:         0.1em 0.1em 0.1em #009D44;
+}
+
+.partida .su_turno {
+	background: transparent url('../img/db_estado_su_turno.png') no-repeat top left;
+    background-size: contain;
+    
+    -moz-text-shadow:    0.1em 0.1em 0.1em #006DB1;
+	-webkit-text-shadow: 0.1em 0.1em 0.1em #006DB1;
+	text-shadow:         0.1em 0.1em 0.1em #006DB1;
+}
+
+.partida .abandono {
+	background: transparent url('../img/db_estado_abandono.png') no-repeat top left;
+    background-size: contain;
+    
+    -moz-text-shadow:    0.1em 0.1em 0.1em #E7AF42;
+	-webkit-text-shadow: 0.1em 0.1em 0.1em #E7AF42;
+	text-shadow:         0.1em 0.1em 0.1em #E7AF42;
+}
+
+/** NUEVA PARTIDA **/
+.cartaTablero {
+	position: relative;
+	
+	margin-top: 1%;
+	margin-bottom: 1%;
+    margin-left: 1.5%;
+	
+	width: 18.5%;
+	height: 23%;
+    
+    float: left;
+}
+
+/** SELECCION TABLERO **/
+#mnu_carta {
+	position: absolute;
+	
+	width: 100%;
+	top: 20%;
+}
+
+#mnu_carta .instruccion {
+	height: 20%;
+    
+    left: 20%;
+	top: 30%;
+}
+
+#mnu_carta[class="marco_carta"] {
+	position: absolute;
+	
+	width: 68%;
+	height: 22%;
+	
+	left: 16%;
+	top: 20%;
+	
+	background-image: url('../img/fondo_dashboard.png');
+	border: 0.2em solid #3F4243;
+	
+	-moz-border-radius: 12%;
+	border-radius: 12%;
+	
+	-moz-box-shadow:    0.2em 0.2em 0.6em #000000;
+	-webkit-box-shadow: 0.2em 0.2em 0.6em #000000;
+	box-shadow:         0.2em 0.2em 0.6em #000000;
+	
+	z-index: 1;
+}
+
+.marco_carta .carta {
+	position: relative;
+	
+	width: 90%;
+	height: 90%;
+	
+	left: 6%;
+	top: 6%;
+}
+
+/** JUEGO **/
+#mnu_preguntas {
+	position: absolute;
+	
+	width: 100%;
+	top: 45%;
+	
+	font-family: gotham-bold;
+}
+
+#mnu_preguntas #fondo_preguntas {
+	position: absolute;
+	
+	width: 80%;
+	
+	right: 10%;
+	top: 0;
+}
+
+#mnu_preguntas #total_preguntas {
+	position: absolute;
+	
+	width: 100%;
+	
+	right: 0;
+	top: 1.5em;
+	
+	text-align: center;
+}
+
+/** FLIP CARDS **/
+.panel {
+	background: transparent !important;
+}
+
+.panel .front {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 900;
+	
+	background: #FFFFFF;
+	
+	-moz-border-radius: 5%;
+	border-radius: 5%;
+	
+	-moz-box-shadow: 0 1px 5px rgba(0,0,0,0.9);
+	-webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.9);
+	box-shadow: 0 1px 5px rgba(0,0,0,0.9);
+	
+	-webkit-transform: rotateX(0deg) rotateY(0deg);
+	-webkit-transform-style: preserve-3d;
+	-webkit-backface-visibility: hidden;
+	
+	-moz-transform: rotateX(0deg) rotateY(0deg);
+	-moz-transform-style: preserve-3d;
+	-moz-backface-visibility: hidden;
+	
+	/* -- transition is the magic sauce for animation -- */
+	-o-transition: all .4s ease-in-out;
+	-ms-transition: all .4s ease-in-out;
+	-moz-transition: all .4s ease-in-out;
+	-webkit-transition: all .4s ease-in-out;
+	transition: all .4s ease-in-out;
+}
+.panel.flip .front {
+	z-index: 900;
+	border-color: #eee;
+	background: #333;
+	
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+	
+	-moz-box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+	-webkit-box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+	box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+}
+
+.panel .back {
+	display: block;
+	position: absolute;
+	
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 800;
+	
+	background: #FF0017;
+	text-shadow: 1px  1px 1px rgba(0,0,0,0.6);
+	
+	-moz-border-radius: 5%;
+	border-radius: 5%;
+	
+	-webkit-transform: rotateY(-180deg);
+	-webkit-transform-style: preserve-3d;
+	-webkit-backface-visibility: hidden;
+	
+	-moz-transform: rotateY(-180deg);
+	-moz-transform-style: preserve-3d;
+	-moz-backface-visibility: hidden;
+	
+	/* -- transition is the magic sauce for animation -- */
+	-o-transition: all .4s ease-in-out;
+	-ms-transition: all .4s ease-in-out;
+	-moz-transition: all .4s ease-in-out;
+	-webkit-transition: all .4s ease-in-out;
+	transition: all .4s ease-in-out;
+}
+
+.panel.flip .back {
+	z-index: 1000;
+	background: #FF0017;
+	
+	-webkit-transform: rotateX(0deg) rotateY(0deg);
+	-moz-transform: rotateX(0deg) rotateY(0deg);
+	
+	box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+	-moz-box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+	-webkit-box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+}
+
+.panel.cartaBloqueada .back {
+	background: #262626 !important;
+}
+
+.click .front {
+	-webkit-transform: rotateY(0deg);
+	-moz-transform: rotateY(0deg);
+}
+.click.flip .front {
+	-webkit-transform: rotateY(180deg);
+	-moz-transform: rotateY(180deg);
+}
+.click .back {
+	-webkit-transform: rotateY(-180deg);
+	-moz-transform: rotateY(-180deg);
+}
+.click.flip .back {
+	-webkit-transform: rotateY(0deg);
+	-moz-transform: rotateY(0deg);
+}
+
+/** ADAPTACIONES **/
+/** Original (480 de ancho) **/
+@media only screen and (orientation: landscape) and (min-width: 479px) {
+	body {
+		font-size: 14px;
+	}
+	
+	#content {
+		width: 480px;
+		height: 320px;
+		
+		margin-left: -240px;
+		margin-top: -160px;
+	}
+}
+
+/** (640 de ancho) Multiplicar 1.33333 (640/480) por original (480) **/
+@media only screen and (orientation: landscape) and (min-width: 639px) {
+	body {
+		font-size: 18.6666px;
+	}
+	
+	#content {
+		width: 640px;
+		height: 427px;
+		
+		margin-left: -320px;
+		margin-top: -214px;
+	}
+}
+
+/** (800 de ancho) Multiplicar 1.5 (720/480) por original (480) **/
+@media only screen and (orientation: landscape) and (min-width: 719px) {
+	body {
+		font-size: 21px;
+	}
+	
+	#content {
+		width: 720px;
+		height: 480px;
+		
+		margin-left: -360px;
+		margin-top: -240px;
+	}
+}
+
+/** (960 de ancho) Multiplicar 2 (960/480) por original (480) **/
+@media only screen and (orientation: landscape) and (min-width: 959px) {
+	body {
+		font-size: 28px;
+	}
+	
+	#content {
+		width: 960px;
+		height: 640px;
+		
+		margin-left: -480px;
+		margin-top: -320px;
+	}
+}
