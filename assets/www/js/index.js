@@ -1,135 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-var app = {
-    // Application Constructor
-    initialize: function() {
-        this.bindEvents();
-        this.register();
-        this.getBadges();
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-    	document.addEventListener('resume', this.onResume, false);
-        document.addEventListener('push-notification', this.receiveEvent, false);
-    },
-    receiveEvent: function(event) {
-        // handle push notifications inside the app
-    	if (paginaActual == templateDashboard) {
-    		inicio();
-    	}
-    },
-    onResume: function() {
-    	resetearBadges({ id : getCache('usuario').id },
-    						function(response, textStatus, jqXHR) {
-    							app.setBadges(0);
-    							app.getPending();
-    						},
-                            function(jqXHR, textStatus, errorThrown) {
-                            });
-        inicio();
-    },
-    getBadges: function() {
-        pushNotification.getApplicationIconBadgeNumber(function(badgeNumber) {
-                                                       badgesNumber = badgeNumber;
-                                                       });
-
-    },
-    setBadges: function(num) {
-        pushNotification.setApplicationIconBadgeNumber(num);
-        badgesNumber = num;
-    },
-    receiveStatus: function() {
-        pushNotification.getRemoteNotificationStatus(function(status) {
-                                                     app.myLog.value+=JSON.stringify(['Registration check - getRemoteNotificationStatus', status])+"\n";
-                                                     });
-    },
-    getPending: function() {
-        pushNotification.getPendingNotifications(function(notifications) {
-                                                 //console.info("NOTIFICATIONS " + notifications.notifications.length);
-                                                 });
-    },
-    register: function() {
-        pushNotification.registerDevice({alert:true, badge:true, sound:true}, function(status) {
-                                            app.storeToken(status.deviceToken);
-                                        });
-    },
-    registerWithFacebook: function() {
-        pushNotification.registerDevice({alert:true, badge:true, sound:true}, function(status) {
-                                        app.linkDevice(status.deviceToken, getCache('usuario').facebook_id);
-                                        });
-    },
-    sendNotification: function(game_id, message, sound, badge) {
-        var xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("POST","http://"+URL+"/ios_send_notification_to_opponent.json",true);
-        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xmlhttp.send("game_id="+game_id+"&message="+message+"&sound="+sound+"&badge="+badge);
-        xmlhttp.onreadystatechange=function() {
-            if (xmlhttp.readyState==4) {
-                console.log("Registration response: " + xmlhttp.responseText);
-            }
-        }
-    },
-    storeToken: function(token) {
-        var xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("POST","http://"+URL+"/ios_register.json",true);
-        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xmlhttp.send("token="+token);
-        xmlhttp.onreadystatechange=function() {
-            if (xmlhttp.readyState==4) {
-                console.log("Registration response: " + xmlhttp.responseText);
-            }
-        }
-    },
-    linkDevice: function(token, facebook_id) {
-        var xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("POST","http://"+URL+"/ios_register.json",true);
-        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xmlhttp.send("token="+token+"&facebook_id="+facebook_id);
-        xmlhttp.onreadystatechange=function() {
-            if (xmlhttp.readyState==4) {
-                console.log("Registration response: " + xmlhttp.responseText);
-            }
-        }
-    },
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicity call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        app.receivedEvent('deviceready');
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
-    }
-};
-
 /** Variables para Javascript **/
 var paginaActual;
 var paginaIndex = "index.html";
@@ -137,7 +5,7 @@ var paginaPrincipal = "default.html";
 var paginaSinConexion = "sinConexion.html";
 var templateDashboard = "dashboard.html";
 
-//var URL = "192.168.1.225:3000";
+//var URL = "192.168.100.7:3000";
 var URL = "still-eyrie-7957.herokuapp.com";
 
 var appId = "336541486458847";
@@ -156,16 +24,57 @@ var ESTATUS_SU_TURNO = 'SU_TURNO';
 var ESTATUS_ABANDONO = 'ABANDONO';
 var ESTATUS_FINALIZO = 'FINALIZO';
 
-var pushNotification;
-var badgesNumber;
+gApp = new Array();
+
+gApp.deviceready = false;
+gApp.gcmregid = '';
+gApp.appId = "413879514049";
+
+function
+GCM_Event(e)
+{
+
+  //console.info("EVENTO: " + e.event);
+  switch( e.event )
+  {
+  case 'registered':
+    gApp.gcmregid = e.regid;
+    break;
+    
+  case 'messageReceived':
+  	if (paginaActual == templateDashboard) {
+    	inicio();
+    }
+    break;
+
+  case 'error':
+    break;
+
+  default:
+    break;
+  }
+}
+
+function
+GCM_Success(e)
+{
+  //SUCCESS
+}
+
+function
+GCM_Fail(e)
+{
+ // FAIL
+}
+
 
 /** Inicializa listeners para eventos **/
 document.addEventListener("offline", redirigirSinConexion, false);
 document.addEventListener("deviceready", registerNotifications, false);
 
 function registerNotifications(){
-    pushNotification = window.plugins.pushNotification;
-    app.initialize();
+	gApp.DeviceReady = true;
+	window.plugins.GCM.register(gApp.appId, "GCM_Event", GCM_Success, GCM_Fail );
     init();
 }
 
@@ -209,7 +118,7 @@ FB.Event.subscribe(
 								function (response, textStatus, jqXHR) {
 									setCache('usuario', response);
 									iniciarProceso();
-									app.registerWithFacebook();
+									registerWithFacebook();
 								},
 								function(jqXHR, textStatus, errorThrown) {
 									alert('No pudimos conectarnos con el servidor de Adivina-Me, vuelve a intentarlo mas tarde.');
@@ -263,6 +172,31 @@ function inicializar() {
 function iniciarProceso() {
 	// Sobreescribir con las acciones a seguir una vez cargada la página.
 }
+
+function registerWithFacebook(){
+	window.plugins.GCM.register(gApp.appId, "GCM_Event", GCM_Success, GCM_Fail );
+	var xmlhttp=new XMLHttpRequest();
+	xmlhttp.open("POST","http://"+URL+"/android_register.json",true);
+	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	xmlhttp.send("regid="+gApp.gcmregid+"&facebook_id="+getCache('usuario').facebook_id);
+	xmlhttp.onreadystatechange=function() {
+		if (xmlhttp.readyState==4) {
+    		console.log("Registration response: " + xmlhttp.responseText);
+   		}
+	}
+}
+
+function sendNotification(game_id, message, sound, badge) {
+        var xmlhttp=new XMLHttpRequest();
+        xmlhttp.open("POST","http://"+URL+"/send_notification_to_opponent.json",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send("game_id="+game_id+"&message="+message+"&sound="+sound+"&badge="+badge);
+        xmlhttp.onreadystatechange=function() {
+            if (xmlhttp.readyState==4) {
+                console.log("Registration response: " + xmlhttp.responseText);
+            }
+        }
+    }
 
 function mostrarConectar() {
 	// Sobreescribir con las acciones a seguir cuando se desee mostrar el botón de 'conectar con FB'.
@@ -501,7 +435,7 @@ var audio_click;
 
 function createAudio(name) {
 	// var src = ''; // iOS
-	var src = 'file:///android_asset/www/'; // Android
+	var src = 'file:///andorid_asset/www/'; // Android
 	switch(name) {
 		case 'flip':
 			src += 'audio/flip.wav';

@@ -308,7 +308,7 @@
 				function (response, textStatus, jqXHR) {
 					$('#loading').hide();
 					if (response.board_id == juego.board_id) {
-						app.sendNotification(juego.id, getCache('usuario').first_name + " te envio una pregunta", true, 1);
+						sendNotification(juego.id, getCache('usuario').first_name + " te envio una pregunta", true, 1);
 						alert('Tu pregunta fue enviada. Es turno de tu oponente.');
 						inicio();
 					} else {
@@ -361,11 +361,11 @@
 			function (response, textStatus, jqXHR) {
 				$('#loading').hide();
 				if (response.board.winner_id == null) {
-					app.sendNotification(juego.id, getCache('usuario').first_name + " intentó adivinar tu carta.", true, 1);
+					sendNotification(juego.id, getCache('usuario').first_name + " intentó adivinar tu carta.", true, 1);
 					alert('No adivinaste la carta de tu oponente. Ahora es su turno.');
 					inicio();
 				} else {
-					app.sendNotification(juego.id, getCache('usuario').first_name + " ha ganado el juego.", true, 1);
+					sendNotification(juego.id, getCache('usuario').first_name + " ha ganado el juego.", true, 1);
 					alert(response.board.money_awarded + ' monedas<br/><br/>¡Ganaste! ¿Deseas crear una nuevo juego?',
 						ALERTA_NUEVO_JUEGO,
 						{
