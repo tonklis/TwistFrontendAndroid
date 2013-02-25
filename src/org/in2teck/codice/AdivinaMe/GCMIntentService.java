@@ -1,11 +1,16 @@
 package org.in2teck.codice.AdivinaMe;
 
+import java.util.List;
+
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import com.google.android.gcm.*;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,24 +68,28 @@ public class GCMIntentService extends GCMBaseIntentService {
     if (extras != null) {
     	JSONObject json;
     	try {
-	    	String message = extras.getString("message");
-	    	String title = extras.getString("title");
-	    	Notification notif = new Notification(android.R.drawable.btn_star_big_on, message, System.currentTimeMillis() );
-	    	notif.flags = Notification.FLAG_AUTO_CANCEL;
-	    	notif.defaults |= Notification.DEFAULT_SOUND;
-	    	notif.defaults |= Notification.DEFAULT_VIBRATE;
-	    	 
-	    	Intent notificationIntent = new Intent(context, AdivinaMe.class);
-	    	notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-	    	PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-	    	 
-	    	notif.setLatestEventInfo(context, title, message, contentIntent);
-	    	String ns = Context.NOTIFICATION_SERVICE;
-	    	NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(ns);
-	    	mNotificationManager.notify(1, notif);
-	    	
-	    	json = new JSONObject().put("event", "messageReceived");
-	        GCMPlugin.sendJavascript( json );
+    		//if  app is running
+    		if(Activity.isActivityVisible())
+    		{
+    			json = new JSONObject().put("event", "messageReceived");
+    	        GCMPlugin.sendJavascript( json );
+    		} else {
+    	    	String message = extras.getString("message");
+    	    	String title = extras.getString("title");
+    	    	Notification notif = new Notification(android.R.drawable.btn_star_big_on, message, System.currentTimeMillis() );
+    	    	notif.flags = Notification.FLAG_AUTO_CANCEL;
+    	    	notif.defaults |= Notification.DEFAULT_SOUND;
+    	    	notif.defaults |= Notification.DEFAULT_VIBRATE;
+    	    	 
+    	    	Intent notificationIntent = new Intent(context, AdivinaMe.class);
+    	    	notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+    	    	PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+    	    	 
+    	    	notif.setLatestEventInfo(context, title, message, contentIntent);
+    	    	String ns = Context.NOTIFICATION_SERVICE;
+    	    	NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(ns);
+    	    	mNotificationManager.notify(1, notif);
+    		}	    	
     	}
     	catch( Exception e)
         {

@@ -37,5 +37,17 @@ public class AdivinaMe extends DroidGap
         
         super.loadUrl("file:///android_asset/www/index.html");
     }
+
+    @Override
+    protected void onResume() {
+      super.onResume();
+      Activity.activityResumed();
+    }
+
+    @Override
+    protected void onPause() {
+      super.onPause();
+      Activity.activityPaused();
+    }
 }
 
