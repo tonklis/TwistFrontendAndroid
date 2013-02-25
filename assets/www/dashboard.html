@@ -133,8 +133,7 @@
         if (game.board.status == ESTATUS_ABANDONO) {
             cerrarJuego({ id : game.board.id },
                 function(response, textStatus, jqXHR) {
-                    if (response.id == game.board.id) {
-                    	sendNotification(game.id, getCache('usuario').first_name + " ha abandonado la partida", true, 1); 
+                    if (response.id == game.board.id) { 
                         inicio();
                     } else {
                     	('#loading').hide();
@@ -150,6 +149,7 @@
             abandonarJuego({ id : game.board.id, user_id : usuario.id },
                 function(response, textStatus, jqXHR) {
                     if(response.id == game.board.id){
+                    	sendNotification(game.id, getCache('usuario').first_name + " ha abandonado la partida", true, 1);
                         inicio();
                     } else {
                     	('#loading').hide();
