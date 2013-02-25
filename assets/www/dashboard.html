@@ -134,6 +134,7 @@
             cerrarJuego({ id : game.board.id },
                 function(response, textStatus, jqXHR) {
                     if (response.id == game.board.id) {
+                    	sendNotification(game.id, getCache('usuario').first_name + " ha abandonado la partida", true, 1); 
                         inicio();
                     } else {
                     	('#loading').hide();
