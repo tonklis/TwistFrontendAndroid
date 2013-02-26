@@ -69,12 +69,9 @@ public class GCMIntentService extends GCMBaseIntentService {
     	JSONObject json;
     	try {
     		//if  app is running
-    		if(Activity.isActivityVisible())
+    		if(!Activity.isActivityVisible())
     		{
-    			json = new JSONObject().put("event", "messageReceived");
-    	        GCMPlugin.sendJavascript( json );
-    		} else {
-    	    	String message = extras.getString("message");
+    		  	String message = extras.getString("message");
     	    	String title = extras.getString("title");
     	    	Notification notif = new Notification(android.R.drawable.btn_star_big_on, message, System.currentTimeMillis() );
     	    	notif.flags = Notification.FLAG_AUTO_CANCEL;
@@ -89,7 +86,9 @@ public class GCMIntentService extends GCMBaseIntentService {
     	    	String ns = Context.NOTIFICATION_SERVICE;
     	    	NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(ns);
     	    	mNotificationManager.notify(1, notif);
-    		}	    	
+    		}
+    		json = new JSONObject().put("event", "messageReceived");
+	        GCMPlugin.sendJavascript( json );
     	}
     	catch( Exception e)
         {
