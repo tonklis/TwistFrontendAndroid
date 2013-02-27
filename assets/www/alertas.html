@@ -1,11 +1,11 @@
 <div class="alerta" tipo="OK">
-	<div class="alerta_mensaje"></div>
+	<div class="alerta_mensaje" id="mensaje_OK"><div id="scroller_OK"></div></div>
 	<div class="alerta_botones">
 		<img class="btn_continuar" src="img/btn_continuar.png" onclick="ejecutaFuncion('btn_continuar')" />
 	</div>
 </div>
 <div class="alerta" tipo="SI_NO">
-	<div class="alerta_mensaje"></div>
+	<div class="alerta_mensaje" id="mensaje_SI_NO"><div id="scroller_SI_NO"></div></div>
 	<div class="alerta_botones">
 		<img class="btn_si" src="img/btn_si.png" onclick="ejecutaFuncion('btn_si')" />
 		<img class="btn_no" src="img/btn_no.png" onclick="ejecutaFuncion('btn_no')" />
@@ -13,35 +13,35 @@
 </div>
 <div class="alerta" tipo="PREGUNTA">
 	<div class="alerta_imagen"></div>
-	<div class="alerta_mensaje"></div>
+	<div class="alerta_mensaje" id="mensaje_PREGUNTA"><div id="scroller_PREGUNTA"></div></div>
 	<div class="alerta_botones">
 		<img class="btn_si" src="img/btn_si.png" onclick="ejecutaFuncion('btn_si')" />
 		<img class="btn_no" src="img/btn_no.png" onclick="ejecutaFuncion('btn_no')" />
 	</div>
 </div>
 <div class="alerta" tipo="ADIVINAR_PREGUNTAR">
-	<div class="alerta_mensaje"></div>
+	<div class="alerta_mensaje" id="mensaje_ADIVINAR_PREGUNTAR"><div id="scroller_ADIVINAR_PREGUNTAR"></div></div>
 	<div class="alerta_botones">
-		<img class="ju_btn_adivinar" src="img/ju_btn_adivinar.png" onclick="ejecutaFuncion('btn_adivinar')" />
-		<img class="ju_btn_preguntar" src="img/ju_btn_preguntar.png" onclick="ejecutaFuncion('btn_preguntar')" />
+		<img class="btn_adivinar" src="img/btn_adivinar.png" onclick="ejecutaFuncion('btn_adivinar')" />
+		<img class="btn_preguntar" src="img/btn_preguntar.png" onclick="ejecutaFuncion('btn_preguntar')" />
 	</div>
 </div>
 <div class="alerta" tipo="ADIVINAR">
-	<div class="alerta_mensaje"></div>
+	<div class="alerta_mensaje" id="mensaje_ADIVINAR"><div id="scroller_ADIVINAR"></div></div>
 	<div class="alerta_botones">
-		<img class="ju_btn_adivinar" src="img/ju_btn_adivinar.png" onclick="ejecutaFuncion('btn_adivinar')" />
+		<img class="btn_adivinar" src="img/btn_adivinar.png" onclick="ejecutaFuncion('btn_adivinar')" />
 	</div>
 </div>
 <div class="alerta" tipo="NUEVO_JUEGO">
-	<div class="alerta_mensaje"></div>
+	<div class="alerta_mensaje" id="mensaje_NUEVO_JUEGO"><div id="scroller_NUEVO_JUEGO"></div></div>
 	<div class="alerta_botones">
-		<img class="btn_nuevo_juego" src="img/btn_nuevo_juego.png" onclick="ejecutaFuncion('btn_nuevo_juego')" />
+		<img class="btn_nuevo_juego" src="img/btn_nuevo_juego_alerta.png" onclick="ejecutaFuncion('btn_nuevo_juego')" />
 		<img class="btn_salir" src="img/btn_salir.png" onclick="ejecutaFuncion('btn_salir')" />
 	</div>
 </div>
 <div class="alerta" tipo="INPUT">
-	<div class="alerta_mensaje"></div>
-	<div class="alerta_inputs"><textarea id="alerta_input" onkeypress='$("body").css("height", "+=1").css("height", "-=1");' maxlength="150" cols="40" rows="2"/></div>
+	<div class="alerta_mensaje" id="mensaje_INPUT"><div id="scroller_INPUT"></div></div>
+	<div class="alerta_inputs"><textarea id="alerta_input" onkeypress='$("body").css("height", "+=1").css("height", "-=1");' maxlength="150" cols="30" rows="2"/></div>
 	<div class="alerta_botones">
 		<img class="btn_enviar" src="img/btn_enviar.png" onclick="ejecutaFuncion('btn_enviar')" />
 		<img class="btn_cancelar" src="img/btn_salir.png" onclick="ejecutaFuncion('btn_cancelar')" />

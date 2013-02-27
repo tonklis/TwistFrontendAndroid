@@ -7,6 +7,13 @@
     // Obtenemos el tipo de tablero que se debe generar
     var tipoTablero = TIPO_CARTA_AMIGO;
     
+	// Cambio de imágenes para botones.
+    $('#btn_tablero_continuar').bind('touchstart',function() { presionarBoton($(this)); });
+    $('#btn_tablero_continuar').bind('touchend',function() { soltarBoton($(this)); });
+    
+    $('#btn_tablero_salir').bind('touchstart',function() { presionarBoton($(this)); });
+    $('#btn_tablero_salir').bind('touchend',function() { soltarBoton($(this)); });
+    
     // Obtenemos todos los personajes y famosos con los que se generarán los tableros y los desplegamos
     setTimeout(function() {
     	getTablero();
@@ -24,7 +31,7 @@
     		}, funcionError);
     }
     
-    function generarTablero(tipoTablero) {
+    function generarTablero() {
     	$('#loading').show();
     	$('#mnu_carta').removeClass('marco_carta');
         $('#mnu_carta').html('<div id="mnu_carta"><img class="instruccion" src="img/nu_selecciona_persona.png"/></div>');
@@ -62,9 +69,10 @@
         $('#loading').hide();
     }
     
-    function seleccionarTablero(tipoTablero) {
-        generarTablero(tipoTablero);
-        actualizarBotones(tipoTablero);
+    function seleccionarTablero(tipo) {
+    	tipoTablero = tipo;
+        generarTablero();
+        actualizarBotones();
     }
     
     function seleccionarPersonaje(posicion) {
@@ -115,7 +123,7 @@
 			function(response, textStatus, jqXHR) {
 				if (response && response.id && response.id > 0) {
 					alert('Tu partida ha sido creada y se ha enviado la solicitud a tu oponente.');
-					sendNotification(response.id, getCache('usuario').first_name + " te ha invitado a una partida.", true, 1);
+					app.sendNotification(response.id, getCache('usuario').first_name + " te ha invitado a una partida.", true, 1);
 					inicio();
 				} else {
 					$('#loading').hide();
@@ -153,11 +161,11 @@
         $('#loading').hide();
     }
     
-    function actualizarBotones(tipo) {
+    function actualizarBotones() {
     	$('#btn_tablero_personajes').attr('src', 'img/nu_btn_personajes.png');
     	$('#btn_tablero_amigos').attr('src', 'img/nu_btn_amigos.png');
     	$('#btn_tablero_famosos').attr('src', 'img/nu_btn_famosos.png');
-    	switch(tipo) {
+    	switch(tipoTablero) {
     		case TIPO_CARTA_PERSONAJE:
     			$('#btn_tablero_personajes').attr('src', 'img/nu_btn_personajes_over.png');
     			break;

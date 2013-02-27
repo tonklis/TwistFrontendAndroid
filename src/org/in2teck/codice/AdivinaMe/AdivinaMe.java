@@ -17,7 +17,7 @@
        under the License.
  */
 
-package org.in2teck.codice.AdivinaMe;
+package org.in2teck.codice.adiviname;
 
 import android.os.Bundle;
 import android.view.Window;

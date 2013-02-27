@@ -1,4 +1,4 @@
-package org.in2teck.codice.AdivinaMe;
+package org.in2teck.codice.adiviname;
 
 import java.util.List;
 

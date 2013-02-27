@@ -24,8 +24,9 @@ var SERVICIO_RESETEAR_BADGES = 13;
  **/
 function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 	var url = "http://still-eyrie-7957.herokuapp.com/";
-    //var url = "http://192.168.1.225:3000/";
+    // var url = "http://192.168.1.128:3000/";
 	var paramsCompletos = false;
+	var getPost = 'post';
 	switch (tipo) {
 		case SERVICIO_LOGIN:
 			if (params.facebook_id && params.first_name && params.last_name && params.email) {
@@ -36,6 +37,7 @@ function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 		case SERVICIO_USUARIO:
 			if (params.id) {
 				url += "users/" + params.id + ".json";
+				getPost = 'get';
 				params = {};
 				paramsCompletos = true;
 			}
@@ -43,17 +45,20 @@ function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 		case SERVICIO_JUEGOS_USUARIO:
 			if (params.id) {
 				url += "games_by_user/" + params.id + ".json";
+				getPost = 'get';
 				params = {};
 				paramsCompletos = true;
 			}
 			break;
 		case SERVICIO_TIPO_CARTAS:
 			url += "templates.json";
+			getPost = 'get';
 			paramsCompletos = true;
 			break;
 		case SERVICIO_CARTAS:
 			if (params.id) {
 				url += "cards_by_type/" + params.id + ".json";
+				getPost = 'get';
 				params = {};
 				paramsCompletos = true;
 			}
@@ -80,6 +85,7 @@ function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 		case SERVICIO_OBTENER_TURNO:
 			if (params.id) {
 				url += "games/last_turn/" + params.id + ".json";
+				getPost = 'get';
 				delete params.id;
 				paramsCompletos = true;
 			}
@@ -138,7 +144,7 @@ function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 		
 		var request = $.ajax({
 			url: url,
-			type: "post",
+			type: getPost,
 			data: params,
 			timeout: 30000
 		});
@@ -176,17 +182,24 @@ function invocarLogin(params, funcionSuccess, funcionError) {
 
 /**
  * Función que actualiza el usuario en la cache con la información actual del servidor.
+ * @param funcionSuccess función que se invocará cuando se haya realizado una petición
+ *   satisfactoria con los parámetros function(response, textStatus, jqXHR);
+ * @param funcionError función que se invocará cuando se haya realizado una petición
+ *   insatisfactoria con los parámetros function(jqXHR, textStatus, errorThrown);
  **/
-function actualizaUsuario() {
+function actualizaUsuario(funcionSuccess, funcionError) {
 	var usuario = getCache('usuario');
 	var params = {
 		id : usuario.id
 	};
 	invocarServicio(SERVICIO_USUARIO, params,
 	function (response, textStatus, jqXHR) {
-		alert('Actualizando usuario con: ' + JSON.stringify(response));
-		setCache('usuario', response);
-	});
+		if (usuario.id == response.id) {
+			setCache('usuario', response);
+			funcionSuccess(response, textStatus, jqXHR);
+		}
+	},
+	funcionError);
 }
 
 /**

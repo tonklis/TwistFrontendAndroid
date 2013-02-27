@@ -67,15 +67,23 @@ GCM_Fail(e)
  // FAIL
 }
 
-
 /** Inicializa listeners para eventos **/
 document.addEventListener("offline", redirigirSinConexion, false);
 document.addEventListener("deviceready", registerNotifications, false);
+document.addEventListener("backbutton", back, false);
 
-function registerNotifications(){
+function registerNotifications() {
 	gApp.DeviceReady = true;
 	window.plugins.GCM.register(gApp.appId, "GCM_Event", GCM_Success, GCM_Fail );
     init();
+}
+
+function back(e) {
+	if (paginaActual == templateDashboard) {
+    	navigator.app.exitApp();
+    } else {
+    	inicio();
+    }
 }
 
 /** Función que mustra la página sin conexión. **/
@@ -105,8 +113,8 @@ FB.Event.subscribe(
 	function(responseS) {
 		FB.getLoginStatus(function (response) {
 			if (response.status == 'connected') {
-				if (!isCache('usuario')) {
-					FB.api('/me', function (me) {
+				FB.api('/me', function (me) {
+					if (!isCache('usuario') || getCache('usuario').facebook_id != me.id) {
 						checkPermissions(function() {
 							var params = {
 								facebook_id	: me.id,
@@ -125,12 +133,12 @@ FB.Event.subscribe(
 									mostrarConectar();
 								});
 						});
-					});
-				} else {
-					checkPermissions(function() {
-						iniciarProceso();
-					});
-				}
+					} else {
+						checkPermissions(function() {
+							iniciarProceso();
+						});
+					}
+				});
 			} else {
 				mostrarConectar();
 			}
@@ -187,16 +195,16 @@ function registerWithFacebook(){
 }
 
 function sendNotification(game_id, message, sound, badge) {
-        var xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("POST","http://"+URL+"/send_notification_to_opponent.json",true);
-        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        xmlhttp.send("game_id="+game_id+"&message="+message+"&sound="+sound+"&badge="+badge);
-        xmlhttp.onreadystatechange=function() {
-            if (xmlhttp.readyState==4) {
-                console.log("Registration response: " + xmlhttp.responseText);
-            }
-        }
-    }
+	var xmlhttp=new XMLHttpRequest();
+	xmlhttp.open("POST","http://"+URL+"/send_notification_to_opponent.json",true);
+	xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+	xmlhttp.send("game_id="+game_id+"&message="+message+"&sound="+sound+"&badge="+badge);
+	xmlhttp.onreadystatechange=function() {
+		if (xmlhttp.readyState==4) {
+			console.log("Registration response: " + xmlhttp.responseText);
+		}
+	}
+}
 
 function mostrarConectar() {
 	// Sobreescribir con las acciones a seguir cuando se desee mostrar el botón de 'conectar con FB'.
@@ -223,6 +231,7 @@ function login() {
 
 /** Funciones generales **/
 function inicio() {
+	cerrarAlert();
 	abrirTemplate(templateDashboard);
 }
 
@@ -395,15 +404,58 @@ function alert(texto, tipo, acciones) {
 	
 	$('#alerta_input').val('');
 	
-	$('.alerta[tipo="' + tipo + '"]').children('.alerta_mensaje').html(texto);
+	$('#scroller_' + tipo).html(texto);
+	switch(tipo) {
+		case ALERTA_PREGUNTA:
+			if (texto.length <= 20) {
+				$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-top', '15%');
+			} else if (texto.length <= 40) {
+				$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-top', '10%');
+			} else if (texto.length <= 60) {
+				$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-top', '5%');
+			} else {
+				$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-top', '0%');
+			}
+			$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-left', '5%');
+			$('.alerta[tipo="' + tipo + '"] .alerta_botones').css('bottom', '5%');
+			break;
+		case ALERTA_INPUT:
+			$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-top', '10%');
+			$('.alerta[tipo="' + tipo + '"] .alerta_botones').css('bottom', '15%');
+			break;
+		case ALERTA_NUEVO_JUEGO:
+			$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-top', '0%');
+			$('.alerta[tipo="' + tipo + '"] .alerta_botones').css('bottom', '5%');
+			break;
+		default:
+			if (texto.length <= 35) {
+				$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-top', '15%');
+				$('.alerta[tipo="' + tipo + '"] .alerta_botones').css('bottom', '20%');
+			} else if (texto.length <= 70) {
+				$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-top', '10%');
+				$('.alerta[tipo="' + tipo + '"] .alerta_botones').css('bottom', '15%');
+			} else if (texto.length <= 105) {
+				$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-top', '5%');
+				$('.alerta[tipo="' + tipo + '"] .alerta_botones').css('bottom', '10%');
+			} else {
+				$('.alerta[tipo="' + tipo + '"] .alerta_mensaje').css('padding-top', '0%');
+				$('.alerta[tipo="' + tipo + '"] .alerta_botones').css('bottom', '5%');
+			}
+			break;
+	}
+	
 	funciones = acciones;
 	
 	if (tipo == ALERTA_PREGUNTA && acciones['imagen']) {
 		$('.alerta[tipo="' + tipo + '"]').children('.alerta_imagen').html(acciones['imagen']);
 	}
 	
+	var scrollerTemp = new iScroll('mensaje_' + tipo);
     $('#alertas').fadeIn('fast', function() {
         $('.alerta[tipo="' + tipo + '"]').show();
+        setTimeout(function () {
+			scrollerTemp.refresh();
+		}, 1000);
     });
 	
 	// navigator.notification.alert(texto, null, 'AdivinaMe'); // Alert original
@@ -435,7 +487,7 @@ var audio_click;
 
 function createAudio(name) {
 	// var src = ''; // iOS
-	var src = 'file:///andorid_asset/www/'; // Android
+	var src = 'file:///android_asset/www/'; // Android
 	switch(name) {
 		case 'flip':
 			src += 'audio/flip.wav';

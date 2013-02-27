@@ -2,16 +2,23 @@
 	// Javascript que se ejecute al iniciar la página.
 	$('#loading').show();
 	
+	var scroll = new iScroll('cuadro_negro');
 	var usuario = getCache('usuario');
 	$('#total_monedas').html(usuario.money);
 	
 	// Cambio de imágenes para botones.
 	$('#btn_nuevo_juego').bind('touchstart',function() { presionarBoton($(this)); });
     $('#btn_nuevo_juego').bind('touchend',function() { soltarBoton($(this)); });
+    
+    actualizaUsuario(
+    	function (response, textStatus, jqXHR) {
+    		usuario = getCache('usuario');
+    		$('#total_monedas').html(usuario.money);
+    	});
 	
 	obtenerJuegosPorUsuario({ id : usuario.id },
 		function(response, textStatus, jqXHR) {
-			$('#cuadro_negro').html('');
+			$('#scroller').html('');
 			
 			$.ajax({
 				url: 'dashboard_partida.html',
@@ -23,6 +30,7 @@
 					}
 					setCache('partidas', response);
 					$('#loading').hide();
+					scroll.refresh();
 				}
 			});
 		},
@@ -101,7 +109,7 @@
 			});
 			
 			// Se agrega el div a la lista y se activa el evento de swipeleft.
-			$('#cuadro_negro').append($div);
+			$('#scroller').append($div);
 			$(".estado").swipeleft(function(event) {
 				$('.botones').hide();
 				$(event.target).children('.botones').show();
@@ -133,7 +141,7 @@
         if (game.board.status == ESTATUS_ABANDONO) {
             cerrarJuego({ id : game.board.id },
                 function(response, textStatus, jqXHR) {
-                    if (response.id == game.board.id) { 
+                    if (response.id == game.board.id) {
                         inicio();
                     } else {
                     	('#loading').hide();
@@ -148,7 +156,7 @@
         } else {
             abandonarJuego({ id : game.board.id, user_id : usuario.id },
                 function(response, textStatus, jqXHR) {
-                    if(response.id == game.board.id){
+                    if (response.id == game.board.id) {
                     	sendNotification(game.id, getCache('usuario').first_name + " ha abandonado la partida", true, 1);
                         inicio();
                     } else {
@@ -163,7 +171,6 @@
         }
         
 	}
-    
 </script>
 <div id="dashboard">
 	<div class="izquierda">
@@ -180,6 +187,8 @@
 	</div>
 	<div class="derecha">
 		<div id="cuadro_negro">
+			<div id="scroller">
+			</div>
 		</div>
 	</div>
 </div>
