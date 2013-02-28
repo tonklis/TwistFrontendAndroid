@@ -1,4 +1,4 @@
-package org.in2teck.codice.adiviname;
+package org.in2teck.codice.AdivinaMe;
 
 import android.app.Application;
 
