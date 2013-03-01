@@ -123,7 +123,7 @@
 			function(response, textStatus, jqXHR) {
 				if (response && response.id && response.id > 0) {
 					alert('Tu partida ha sido creada y se ha enviado la solicitud a tu oponente.');
-					app.sendNotification(response.id, getCache('usuario').first_name + " te ha invitado a una partida.", true, 1);
+					sendNotification(response.id, getCache('usuario').first_name + " te ha invitado a una partida.", true, 1);
 					inicio();
 				} else {
 					$('#loading').hide();

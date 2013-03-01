@@ -123,7 +123,8 @@
 	// Funcionalidad de los botones de borrar
 	function confirmacion(game) {
 		var mensaje = '¿Deseas abandonar esta partida? Se perderan todos los datos.';
-		if (game.board.status == ESTATUS_ABANDONO) {
+		if (game.board.status == ESTATUS_ABANDONO
+				|| game.board.status == ESTATUS_FINALIZO) {
 			var mensaje = '¿Deseas borrar esta partida?';
 		}
 		alert(mensaje,

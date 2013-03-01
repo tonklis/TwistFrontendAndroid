@@ -154,8 +154,12 @@ function invocarServicio(tipo, params, funcionSuccess, funcionError) {
 		request.fail(function (jqXHR, textStatus, errorThrown) {
 			funcionError(jqXHR, textStatus, errorThrown);
 			if (textStatus == 'timeout') {
-				alert('Al parecer tu conexión a internet es inestable. Por favor vuelve a intentar.');
-				inicio();
+				alert('Al parecer tu conexión a internet es inestable. Por favor vuelve a intentar.',
+					ALERTA_OK,
+					{
+                        'btn_continuar' : function () { inicio(); }
+                  	});
+				$('#loading').hide();
 			}
 		});
 	} else {

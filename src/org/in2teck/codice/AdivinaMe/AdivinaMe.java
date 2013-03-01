@@ -36,6 +36,7 @@ public class AdivinaMe extends DroidGap
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         super.loadUrl("file:///android_asset/www/index.html");
+        appView.bindButton(true);
     }
 
     @Override

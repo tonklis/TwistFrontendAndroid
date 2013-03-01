@@ -181,6 +181,7 @@
     
     function continuar() {
         if (posicionSeleccionada != null) {
+        	$('#loading').show();
         	var oponente = {
         		id : $('.carta[posicion="' + posicionSeleccionada + '"]').attr('id'),
         		nombre : $('.carta[posicion="' + posicionSeleccionada + '"]').find('.nombre').attr('nombre')

@@ -33,8 +33,7 @@ gApp.appId = "413879514049";
 function
 GCM_Event(e)
 {
-
-  //console.info("EVENTO: " + e.event);
+  // console.log("EVENTO: " + e.event);
   switch( e.event )
   {
   case 'registered':
@@ -70,20 +69,23 @@ GCM_Fail(e)
 /** Inicializa listeners para eventos **/
 document.addEventListener("offline", redirigirSinConexion, false);
 document.addEventListener("deviceready", registerNotifications, false);
-document.addEventListener("backbutton", back, false);
 
 function registerNotifications() {
+	document.addEventListener("backbutton", back, false);
+	
 	gApp.DeviceReady = true;
 	window.plugins.GCM.register(gApp.appId, "GCM_Event", GCM_Success, GCM_Fail );
     init();
 }
 
-function back(e) {
+function back() {
+	cerrarAlert();
 	if (paginaActual == templateDashboard) {
     	navigator.app.exitApp();
     } else {
     	inicio();
     }
+    return false;
 }
 
 /** Función que mustra la página sin conexión. **/
@@ -231,7 +233,6 @@ function login() {
 
 /** Funciones generales **/
 function inicio() {
-	cerrarAlert();
 	abrirTemplate(templateDashboard);
 }
 
