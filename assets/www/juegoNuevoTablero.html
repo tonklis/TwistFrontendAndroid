@@ -20,15 +20,18 @@
     }, 1000);
         
     function getTablero() {
-    	obtenerCartasPorId({ 'id' : TIPO_CARTA_FAMOSO },
-    		function(responseFamosos) {
-    			setCache('famosos', responseFamosos);
-    			obtenerCartasPorId({ 'id' : TIPO_CARTA_PERSONAJE },
-    			function(responsePersonajes) {
-    				setCache('personajes', responsePersonajes);
-    				seleccionarTablero(tipoTablero);
-    			}, funcionError);
-    		}, funcionError);
+    	if (getCache('amigos').length >= 20) {
+    		seleccionarTablero(TIPO_CARTA_AMIGO);
+    	} else {
+    		$('#btn_tablero_amigos').hide();
+    		seleccionarTablero(TIPO_CARTA_PERSONAJE);
+    	}
+    }
+    
+    function seleccionarTablero(tipo) {
+    	tipoTablero = tipo;
+        generarTablero();
+        actualizarBotones();
     }
     
     function generarTablero() {
@@ -69,12 +72,24 @@
         $('#loading').hide();
     }
     
-    function seleccionarTablero(tipo) {
-    	tipoTablero = tipo;
-        generarTablero();
-        actualizarBotones();
+    function actualizarBotones() {
+    	$('#btn_tablero_personajes').attr('src', 'img/nu_btn_personajes.png');
+    	$('#btn_tablero_amigos').attr('src', 'img/nu_btn_amigos.png');
+    	$('#btn_tablero_famosos').attr('src', 'img/nu_btn_famosos.png');
+    	switch(tipoTablero) {
+    		case TIPO_CARTA_PERSONAJE:
+    			$('#btn_tablero_personajes').attr('src', 'img/nu_btn_personajes_over.png');
+    			break;
+    		case TIPO_CARTA_AMIGO:
+    			$('#btn_tablero_amigos').attr('src', 'img/nu_btn_amigos_over.png');
+    			break;
+    		case TIPO_CARTA_FAMOSO:
+    			$('#btn_tablero_famosos').attr('src', 'img/nu_btn_famosos_over.png');
+    			break;
+    	}
     }
     
+    // Seleccionamos el personaje
     function seleccionarPersonaje(posicion) {
         if (posicionSeleccionada != null) {
         	$('.cartaTablero[posicion="' + posicionSeleccionada + '"]').removeClass('cartaSeleccionada');
@@ -159,23 +174,6 @@
     function funcionError(response) {
         alert('Lo sentimos, hubo un error al cargar el tablero');
         $('#loading').hide();
-    }
-    
-    function actualizarBotones() {
-    	$('#btn_tablero_personajes').attr('src', 'img/nu_btn_personajes.png');
-    	$('#btn_tablero_amigos').attr('src', 'img/nu_btn_amigos.png');
-    	$('#btn_tablero_famosos').attr('src', 'img/nu_btn_famosos.png');
-    	switch(tipoTablero) {
-    		case TIPO_CARTA_PERSONAJE:
-    			$('#btn_tablero_personajes').attr('src', 'img/nu_btn_personajes_over.png');
-    			break;
-    		case TIPO_CARTA_AMIGO:
-    			$('#btn_tablero_amigos').attr('src', 'img/nu_btn_amigos_over.png');
-    			break;
-    		case TIPO_CARTA_FAMOSO:
-    			$('#btn_tablero_famosos').attr('src', 'img/nu_btn_famosos_over.png');
-    			break;
-    	}
     }
 </script>
 <div id="seleccionTablero">

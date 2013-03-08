@@ -42,6 +42,7 @@ GCM_Event(e)
     
   case 'messageReceived':
   	if (paginaActual == templateDashboard) {
+  		cerrarAlert();
     	inicio();
     }
     break;

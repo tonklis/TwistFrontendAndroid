@@ -34,8 +34,30 @@
 		<script>
             /* Sobrescribimos la función que se invoca al cargar la página. */
 			iniciarProceso = function () {
+				if (!isCache('famosos') || !isCache('personajes')) {
+					obtenerCartasPorId({ 'id' : TIPO_CARTA_FAMOSO },
+						function(responseFamosos) {
+							setCache('famosos', responseFamosos);
+							obtenerCartasPorId({ 'id' : TIPO_CARTA_PERSONAJE },
+								function(responsePersonajes) {
+									setCache('personajes', responsePersonajes);
+									iniciaApp();
+								}, funcionError);
+						}, funcionError);
+				} else {
+					iniciaApp();
+				}
+			}
+			
+			/** Función que se invoca para inicar la app **/
+			function iniciaApp() {
 				inicio();
 				$('#alertas').load('alertas.html');
+			}
+			
+			/* Función que se invoca si no se pudieron obtener los templates de las cartas */
+			function funcionError() {
+				redirigirSinConexion();
 			}
         </script>
 		
