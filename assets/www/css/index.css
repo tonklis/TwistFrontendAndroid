@@ -244,6 +244,19 @@ body:after {
 	overflow: none;
 }
 
+.alerta .alerta_cerrar {
+	position: absolute;
+	
+	top: 0%;
+	right: 0%;
+	
+	text-align: center;
+}
+
+.alerta .alerta_cerrar img {
+	height: 20%;
+}
+
 .alerta .alerta_mensaje {
 	font-size: 120%;
 	
