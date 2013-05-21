@@ -23,6 +23,7 @@
 			$.ajax({
 				url: 'dashboard_partida.html',
 				success: function(data) {
+					$('#scroller').html('');
 					for (var i = 0; i < response.length; i++) {
 						var $div = $("<div class='partida'/>");
 						$div.html(data);
@@ -87,11 +88,16 @@
 			var hoy = new Date();
 			var diff = (hoy - ultimoMovimiento);
 			var dias = diff / (24 * 60 * 60 * 1000);
+			dias = Math.floor(dias);
 			var horas = diff / (60 * 60 * 1000);
+			horas = Math.floor(horas);
 			if (dias >= 1) {
-				$div.find('.actualizacion').html('Hace ' + Math.floor(dias) + ' días');
+				$div.find('.actualizacion').html('Hace ' + dias + ' días');
 			} else {
-				$div.find('.actualizacion').html('Hace ' + Math.floor(horas) + ' horas');
+				if (horas < 0) {
+					horas = 0;
+				}
+				$div.find('.actualizacion').html('Hace ' + horas + ' horas');
 			}
 			
 			// Se inicializan los clicks.
